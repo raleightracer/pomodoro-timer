@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Google Font: JetBrains Mono for the digital clock feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<!--
+  The <body> receives a dynamic theme class via JavaScript:
+  - .theme-pomodoro  → deep dark blue palette
+  - .theme-short     → soft pastel blue palette
+  - .theme-long      → earthy forest green palette
+-->
+<body class="theme-pomodoro">
+
+  <!-- ============================================================
+    MAIN APPLICATION WRAPPER — centers everything on the page
+  ============================================================ -->
+  <main class="app-wrapper">
+
+    <!-- ============================================================
+      TIMER CARD — the central component housing mode tabs,
+      countdown display, and the start/pause button
+    ============================================================ -->
+    <section class="timer-card" aria-label="Pomodoro Timer">
+
+      <!-- Mode Navigation Tabs -->
+      <nav class="mode-nav" role="tablist" aria-label="Timer modes">
+
+        <!-- Each button has data-mode (used by JS) and data-duration (seconds) -->
+        <button
+          class="mode-btn active"
+          role="tab"
+          aria-selected="true"
+          data-mode="pomodoro"
+          data-duration="1500"
+          id="tab-pomodoro"
+          aria-controls="timer-display"
+        >
+          Pomodoro
+        </button>
+
+        <button
+          class="mode-btn"
+          role="tab"
+          aria-selected="false"
+          data-mode="short"
+          data-duration="300"
+          id="tab-short"
+          aria-controls="timer-display"
+        >
+          Short Break
+        </button>
+
+        <button
+          class="mode-btn"
+          role="tab"
+          aria-selected="false"
+          data-mode="long"
+          data-duration="900"
+          id="tab-long"
+          aria-controls="timer-display"
+        >
+          Long Break
+        </button>
+
+      </nav>
+
+      <!-- Settings button (gear icon, top-right of card) -->
+      <button class="settings-btn" id="settings-btn" aria-label="Open timer settings" title="Customize timer durations">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+
+      <!-- Countdown Display — shows MM:SS in large bold font -->
+      <div
+        class="timer-display"
+        id="timer-display"
+        role="timer"
+        aria-live="polite"
+        aria-label="Time remaining"
+      >
+        <span id="timer-minutes">25</span><span class="colon">:</span><span id="timer-seconds">00</span>
+      </div>
+
+      <!-- Session counter label beneath the timer -->
+      <p class="session-label" id="session-label">
+        <span class="session-number">#<span id="session-count">1</span></span>
+        <span class="session-text" id="session-text">Time to focus!</span>
+      </p>
+
+      <!-- Button row: START/PAUSE + Skip-to-next button -->
+      <div class="btn-row">
+
+        <!-- START / PAUSE button -->
+        <button
+          class="cta-btn"
+          id="start-pause-btn"
+          aria-label="Start timer"
+        >
+          START
+        </button>
+
+        <!-- Skip button — jumps to the next phase (like the ⏭ in the screenshot) -->
+        <button
+          class="skip-btn"
+          id="skip-btn"
+          aria-label="Skip to next phase"
+          title="Skip to next phase"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/>
+          </svg>
+        </button>
+
+      </div>
+
+    </section>
+    <!-- END .timer-card -->
+
+    <!-- ============================================================
+      TASK MANAGEMENT AREA — below the main card
+    ============================================================ -->
+    <section class="tasks-section" aria-label="Task list">
+
+      <!-- Tasks Header -->
+      <header class="tasks-header">
+        <h2 class="tasks-title">Tasks</h2>
+
+        <!-- Kebab menu wrapper — button + dropdown live here together -->
+        <div class="kebab-wrapper" id="kebab-wrapper">
+          <button class="tasks-menu-btn" aria-label="Task options" id="kebab-btn" aria-haspopup="true" aria-expanded="false">
+            <span class="kebab-dot"></span>
+            <span class="kebab-dot"></span>
+            <span class="kebab-dot"></span>
+          </button>
+
+          <!-- Dropdown menu — hidden until kebab is clicked -->
+          <div class="kebab-dropdown" id="kebab-dropdown" role="menu" aria-hidden="true">
+            <button class="kebab-menu-item" id="menu-mark-all" role="menuitem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Mark All as Finished
+            </button>
+            <button class="kebab-menu-item" id="menu-clear-finished" role="menuitem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+              Clear Finished Tasks
+            </button>
+            <div class="kebab-divider"></div>
+            <button class="kebab-menu-item danger" id="menu-clear-all" role="menuitem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              Clear All Tasks
+            </button>
+          </div>
+        </div>
+
+      </header>
+
+      <hr class="tasks-divider" />
+
+      <!-- Dynamic task list — tasks are appended here by JS -->
+      <ul class="task-list" id="task-list" role="list" aria-label="Your tasks">
+        <!-- Tasks injected here by app.js -->
+      </ul>
+
+      <!-- Inline task input — hidden by default, shown on "+ Add Task" click -->
+      <div class="add-task-input-wrapper" id="add-task-input-wrapper" aria-hidden="true">
+        <input
+          type="text"
+          class="add-task-input"
+          id="add-task-input"
+          placeholder="What are you working on?"
+          maxlength="120"
+          aria-label="New task name"
+        />
+        <div class="add-task-actions">
+          <button class="btn-save-task" id="btn-save-task">Save</button>
+          <button class="btn-cancel-task" id="btn-cancel-task">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Add Task Button (dotted border style) -->
+      <button class="add-task-btn" id="add-task-btn" aria-label="Add a new task">
+        <span class="add-task-icon" aria-hidden="true">＋</span>
+        Add Task
+      </button>
+
+    </section>
+    <!-- END .tasks-section -->
+
+  </main>
+  <!-- END .app-wrapper -->
+
+  <!-- ============================================================
+    SETTINGS MODAL — customize timer durations
+    Hidden by default; toggled by the gear button.
+    Uses a faux-viewport wrapper (normal flow div) so the iframe
+    sizes correctly — no position:fixed used.
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+
+      <header class="modal-header">
+        <h2 class="modal-title" id="modal-title">Timer Settings</h2>
+        <button class="modal-close-btn" id="modal-close-btn" aria-label="Close settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </header>
+
+      <p class="modal-subtitle">Set the duration for each timer mode (in minutes).</p>
+
+      <div class="modal-fields">
+
+        <!-- Pomodoro duration input -->
+        <div class="setting-row">
+          <label class="setting-label" for="setting-pomodoro">
+            <span class="setting-dot dot-pomodoro" aria-hidden="true"></span>
+            Pomodoro
+          </label>
+          <div class="setting-input-group">
+            <button class="stepper-btn" data-target="setting-pomodoro" data-delta="-1" aria-label="Decrease Pomodoro time">−</button>
+            <input
+              type="number"
+              class="setting-input"
+              id="setting-pomodoro"
+              data-mode="pomodoro"
+              min="1" max="90"
+              value="25"
+              aria-label="Pomodoro duration in minutes"
+            />
+            <button class="stepper-btn" data-target="setting-pomodoro" data-delta="1" aria-label="Increase Pomodoro time">+</button>
+          </div>
+          <span class="setting-unit">min</span>
+        </div>
+
+        <!-- Short Break duration input -->
+        <div class="setting-row">
+          <label class="setting-label" for="setting-short">
+            <span class="setting-dot dot-short" aria-hidden="true"></span>
+            Short Break
+          </label>
+          <div class="setting-input-group">
+            <button class="stepper-btn" data-target="setting-short" data-delta="-1" aria-label="Decrease Short Break time">−</button>
+            <input
+              type="number"
+              class="setting-input"
+              id="setting-short"
+              data-mode="short"
+              min="1" max="30"
+              value="5"
+              aria-label="Short Break duration in minutes"
+            />
+            <button class="stepper-btn" data-target="setting-short" data-delta="1" aria-label="Increase Short Break time">+</button>
+          </div>
+          <span class="setting-unit">min</span>
+        </div>
+
+        <!-- Long Break duration input -->
+        <div class="setting-row">
+          <label class="setting-label" for="setting-long">
+            <span class="setting-dot dot-long" aria-hidden="true"></span>
+            Long Break
+          </label>
+          <div class="setting-input-group">
+            <button class="stepper-btn" data-target="setting-long" data-delta="-1" aria-label="Decrease Long Break time">−</button>
+            <input
+              type="number"
+              class="setting-input"
+              id="setting-long"
+              data-mode="long"
+              min="1" max="60"
+              value="15"
+              aria-label="Long Break duration in minutes"
+            />
+            <button class="stepper-btn" data-target="setting-long" data-delta="1" aria-label="Increase Long Break time">+</button>
+          </div>
+          <span class="setting-unit">min</span>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="btn-modal-cancel">Cancel</button>
+        <button class="btn-modal-save" id="btn-modal-save">Apply</button>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+  <!-- Audio element for the completion beep (generated by JS) -->
+  <audio id="beep-audio" aria-hidden="true"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
