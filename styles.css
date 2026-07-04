@@ -1,24 +1,13 @@
-/* ================================================================
-   POMODORO TIMER — styles.css
-   A state-driven, dynamic theme system using CSS custom properties.
-   All color transitions are controlled by theme classes on <body>.
-   ================================================================ */
-
-/* ----------------------------------------------------------------
-   1. CSS RESET & BASE STYLES
-   ---------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Remove default list styling */
 ul {
   list-style: none;
 }
 
-/* Make buttons inherit font from parent */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -26,14 +15,9 @@ button {
   background: none;
 }
 
-/* ----------------------------------------------------------------
-   2. CSS CUSTOM PROPERTIES — THEME SYSTEM
-   These variables are defined per theme class on <body>.
-   Every color in the app references these variables, enabling
-   smooth, zero-JavaScript color transitions on theme switch.
-   ---------------------------------------------------------------- */
+/* Custom properties */
 
-/* --- DEFAULT / POMODORO THEME: Rich deep dark blue --- */
+/* Pomodoro theme */
 body.theme-pomodoro {
   --bg-page:         #1a2a4a;      /* Deep dark navy blue */
   --bg-card:         rgba(30, 50, 85, 0.85); /* Slightly lighter blue w/ transparency */
@@ -59,7 +43,7 @@ body.theme-pomodoro {
   --color-save-bg:   #ffffff;
 }
 
-/* --- SHORT BREAK THEME: Calming pastel/soft blue --- */
+/* Short break theme */
 body.theme-short {
   --bg-page:         #5b8fc9;      /* Soft, calming medium blue */
   --bg-card:         rgba(100, 150, 210, 0.55);
@@ -85,7 +69,7 @@ body.theme-short {
   --color-save-bg:   #ffffff;
 }
 
-/* --- LONG BREAK THEME: Earthy forest green --- */
+/* Long break theme */
 body.theme-long {
   --bg-page:         #2d5a3d;      /* Deep organic forest green */
   --bg-card:         rgba(50, 95, 65, 0.75);
@@ -111,29 +95,23 @@ body.theme-long {
   --color-save-bg:   #ffffff;
 }
 
-/* ----------------------------------------------------------------
-   3. PAGE BODY & LAYOUT
-   The body itself IS the full-page background (colored by theme).
-   transition: all 0.4s ease makes the color shift smooth.
-   ---------------------------------------------------------------- */
+/* Page body and layout */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
   background-color: var(--bg-page);
 
-  /* Smooth transition for ALL properties including background-color */
+  /* Smooth background transition */
   transition: background-color 0.4s ease;
 
-  /* Use flexbox to center the main app card on the page */
+  /* Center the app card */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
 }
 
-/* ----------------------------------------------------------------
-   4. MAIN APP WRAPPER — constrains max width and stacks sections
-   ---------------------------------------------------------------- */
+/* App wrapper */
 .app-wrapper {
   width: 100%;
   max-width: 480px;
@@ -142,9 +120,7 @@ body {
   gap: 1.25rem;
 }
 
-/* ----------------------------------------------------------------
-   5. TIMER CARD
-   ---------------------------------------------------------------- */
+/* Timer card */
 .timer-card {
   background: var(--bg-card);
   border-radius: 18px;
@@ -154,20 +130,15 @@ body {
   align-items: center;
   gap: 0.75rem;
 
-  /* Glassmorphism-lite: a subtle backdrop blur for a premium feel */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
-  /* Soft border for definition on transparent bg */
   border: 1px solid rgba(255, 255, 255, 0.15);
 
-  /* Smooth card background transition on theme switch */
   transition: background 0.4s ease, border-color 0.4s ease;
 }
 
-/* ----------------------------------------------------------------
-   6. MODE NAVIGATION TABS
-   ---------------------------------------------------------------- */
+/* Mode navigation tabs */
 .mode-nav {
   display: flex;
   gap: 0.25rem;
@@ -187,7 +158,7 @@ body {
   border: none;
   cursor: pointer;
 
-  /* Smooth transition for active state highlight */
+  /* Smooth active-state transition */
   transition: background 0.25s ease, color 0.25s ease;
   white-space: nowrap;
 }
@@ -197,19 +168,17 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Active tab gets pill background and full-brightness text */
+/* Active tab */
 .mode-btn.active {
   background: var(--color-tab-active-bg);
   color: var(--color-tab-active-text);
   font-weight: 600;
 }
 
-/* ----------------------------------------------------------------
-   7. TIMER DISPLAY (the big countdown numbers)
-   ---------------------------------------------------------------- */
+/* Timer display */
 .timer-display {
   font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: clamp(5rem, 18vw, 7.5rem); /* Fluid sizing: big on desktop, fits on mobile */
+  font-size: clamp(5rem, 18vw, 7.5rem);
   font-weight: 700;
   color: var(--color-accent);
   letter-spacing: 0.04em;
@@ -217,22 +186,22 @@ body {
   margin: 0.5rem 0;
   transition: color 0.4s ease;
 
-  /* tabular-nums ensures digits don't shift width as they change */
+  /* Keep digits aligned */
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
   gap: 0;
 }
 
-/* The colon between MM and SS */
+/* Colon between minutes and seconds */
 .colon {
-  /* Pulsing animation when timer is running (class added by JS) */
+  /* Default colon state */
   animation: none;
   display: inline-block;
-  margin-bottom: 6px; /* Slight optical alignment correction */
+  margin-bottom: 6px;
 }
 
-/* Animated colon pulse when timer is running */
+/* Animated colon pulse */
 body.timer-running .colon {
   animation: colon-pulse 1s step-start infinite;
 }
@@ -242,9 +211,7 @@ body.timer-running .colon {
   50%       { opacity: 0; }
 }
 
-/* ----------------------------------------------------------------
-   8. SESSION LABEL (#1 Time to focus!)
-   ---------------------------------------------------------------- */
+/* Session label */
 .session-label {
   display: flex;
   flex-direction: column;
@@ -269,9 +236,7 @@ body.timer-running .colon {
   transition: color 0.4s ease;
 }
 
-/* ----------------------------------------------------------------
-   9. START / PAUSE BUTTON (main CTA)
-   ---------------------------------------------------------------- */
+/* Start / pause button */
 .cta-btn {
   background: var(--color-cta-bg);
   color: var(--color-cta-text);
@@ -285,7 +250,7 @@ body.timer-running .colon {
   margin-top: 0.5rem;
   box-shadow: 0 6px 20px var(--color-cta-shadow);
 
-  /* Smooth transitions for theme changes and hover states */
+  /* Smooth theme transitions */
   transition:
     background 0.4s ease,
     color 0.4s ease,
@@ -302,9 +267,7 @@ body.timer-running .colon {
   transform: translateY(0px) scale(0.98);
 }
 
-/* ----------------------------------------------------------------
-   9b. BUTTON ROW — START/PAUSE + Skip side by side
-   ---------------------------------------------------------------- */
+/* Button row */
 .btn-row {
   display: flex;
   align-items: center;
@@ -312,15 +275,15 @@ body.timer-running .colon {
   margin-top: 0.5rem;
 }
 
-/* Make the CTA button fill the row, skip stays compact */
+/* Let the CTA fill the row */
 .btn-row .cta-btn {
-  margin-top: 0; /* row handles spacing now */
+  margin-top: 0;
   flex: 1;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
 
-/* Skip-to-next button */
+/* Skip button */
 .skip-btn {
   width: 48px;
   height: 48px;
@@ -348,15 +311,13 @@ body.timer-running .colon {
   transform: scale(0.95);
 }
 
-/* ----------------------------------------------------------------
-   10. TASKS SECTION
-   ---------------------------------------------------------------- */
+/* Tasks section */
 .tasks-section {
   width: 100%;
   color: var(--color-accent);
 }
 
-/* Header row: "Tasks" label + kebab menu button */
+/* Tasks header */
 .tasks-header {
   display: flex;
   align-items: center;
@@ -372,7 +333,7 @@ body.timer-running .colon {
   transition: color 0.4s ease;
 }
 
-/* Three-dot kebab menu button */
+/* Kebab menu button */
 .tasks-menu-btn {
   display: flex;
   flex-direction: column;
@@ -401,12 +362,12 @@ body.timer-running .colon {
   transition: background 0.4s ease;
 }
 
-/* Wrapper holds the button + dropdown together for positioning */
+/* Dropdown wrapper */
 .kebab-wrapper {
   position: relative;
 }
 
-/* Dropdown menu panel */
+/* Dropdown menu */
 .kebab-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -427,14 +388,14 @@ body.timer-running .colon {
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-/* Visible state toggled by JS */
+/* Visible state */
 .kebab-dropdown.open {
   opacity: 1;
   pointer-events: all;
   transform: translateY(0) scale(1);
 }
 
-/* Individual menu items */
+/* Menu items */
 .kebab-menu-item {
   width: 100%;
   display: flex;
@@ -457,7 +418,7 @@ body.timer-running .colon {
   background: rgba(255, 255, 255, 0.12);
 }
 
-/* Danger variant — red tint for destructive action */
+/* Danger menu item */
 .kebab-menu-item.danger {
   color: #ff9090;
 }
@@ -467,7 +428,7 @@ body.timer-running .colon {
   color: #ffb3b3;
 }
 
-/* Thin separator between regular and danger items */
+/* Menu divider */
 .kebab-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.12);
@@ -481,9 +442,7 @@ body.timer-running .colon {
   transition: border-color 0.4s ease;
 }
 
-/* ----------------------------------------------------------------
-   11. TASK LIST & INDIVIDUAL TASK ITEMS
-   ---------------------------------------------------------------- */
+/* Task list */
 .task-list {
   display: flex;
   flex-direction: column;
@@ -491,7 +450,7 @@ body.timer-running .colon {
   margin-bottom: 0.75rem;
 }
 
-/* Individual task item */
+/* Task item */
 .task-item {
   display: flex;
   align-items: center;
@@ -508,7 +467,7 @@ body.timer-running .colon {
   animation: task-slide-in 0.25s ease forwards;
 }
 
-/* Slide-in animation for newly added tasks */
+/* Slide-in animation */
 @keyframes task-slide-in {
   from {
     opacity: 0;
@@ -524,7 +483,7 @@ body.timer-running .colon {
   background: var(--color-task-hover);
 }
 
-/* Custom checkbox circle */
+/* Task checkbox */
 .task-checkbox {
   width: 20px;
   height: 20px;
@@ -546,7 +505,7 @@ body.timer-running .colon {
   line-height: 1;
 }
 
-/* Task text label */
+/* Task text */
 .task-text {
   flex: 1;
   font-size: 0.9rem;
@@ -556,7 +515,7 @@ body.timer-running .colon {
   word-break: break-word;
 }
 
-/* Delete button (×) on each task */
+/* Task delete button */
 .task-delete {
   width: 22px;
   height: 22px;
@@ -581,7 +540,7 @@ body.timer-running .colon {
   color: #ff8080;
 }
 
-/* ---- COMPLETED TASK STATE ---- */
+/* Completed task state */
 .task-item.completed {
   opacity: 0.5;
 }
@@ -600,9 +559,7 @@ body.timer-running .colon {
   display: block;
 }
 
-/* ----------------------------------------------------------------
-   12. INLINE ADD TASK INPUT AREA
-   ---------------------------------------------------------------- */
+/* Inline add-task input */
 .add-task-input-wrapper {
   background: var(--color-input-bg);
   border: 1px solid var(--color-input-border);
@@ -610,7 +567,7 @@ body.timer-running .colon {
   padding: 0.75rem 1rem;
   margin-bottom: 0.75rem;
 
-  /* Hidden by default; shown by JS by removing .hidden class */
+  /* Hidden by default */
   display: none;
   flex-direction: column;
   gap: 0.6rem;
@@ -618,7 +575,7 @@ body.timer-running .colon {
   transition: background 0.4s ease;
 }
 
-/* Show class applied by JS */
+/* Visible state */
 .add-task-input-wrapper.visible {
   display: flex;
 }
@@ -640,7 +597,7 @@ body.timer-running .colon {
   color: var(--color-muted);
 }
 
-/* Action row: Save + Cancel buttons */
+/* Add-task actions */
 .add-task-actions {
   display: flex;
   align-items: center;
@@ -681,15 +638,12 @@ body.timer-running .colon {
   color: var(--color-accent);
 }
 
-/* ----------------------------------------------------------------
-   13. ADD TASK BUTTON (dotted border dashed style)
-   ---------------------------------------------------------------- */
+/* Add-task button */
 .add-task-btn {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: 10px;
 
-  /* Dashed/dotted border for the "Add Task" affordance */
   border: 2px dashed var(--color-add-task-border);
   background: transparent;
   color: var(--color-muted);
@@ -719,9 +673,7 @@ body.timer-running .colon {
   line-height: 1;
 }
 
-/* ----------------------------------------------------------------
-   14. RESPONSIVE ADJUSTMENTS
-   ---------------------------------------------------------------- */
+/* Responsive adjustments */
 @media (max-width: 480px) {
   .timer-card {
     padding: 1.5rem 1.25rem 2rem;
@@ -745,11 +697,7 @@ body.timer-running .colon {
   }
 }
 
-/* ----------------------------------------------------------------
-   16. SETTINGS BUTTON (gear icon inside the timer card)
-   ---------------------------------------------------------------- */
-
-/* Position the card relatively so the settings btn can sit top-right */
+/* Settings button */
 .timer-card {
   position: relative;
 }
@@ -777,14 +725,8 @@ body.timer-running .colon {
   transform: rotate(30deg);
 }
 
-/* ----------------------------------------------------------------
-   17. SETTINGS MODAL OVERLAY
-   Uses a normal-flow full-screen wrapper (not fixed) so the
-   iframe auto-sizes correctly. The overlay is a flex container
-   that centers the modal card.
-   ---------------------------------------------------------------- */
+/* Settings modal overlay */
 .modal-overlay {
-  /* Normal-flow overlay that covers the viewport */
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
@@ -800,15 +742,13 @@ body.timer-running .colon {
   transition: opacity 0.25s ease;
 }
 
-/* Visible state toggled by JS */
+/* Visible state */
 .modal-overlay.visible {
   opacity: 1;
   pointer-events: all;
 }
 
-/* ----------------------------------------------------------------
-   18. MODAL CARD
-   ---------------------------------------------------------------- */
+/* Modal card */
 .modal-card {
   background: var(--bg-card-solid);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -827,7 +767,7 @@ body.timer-running .colon {
   transform: scale(1) translateY(0);
 }
 
-/* Modal header row */
+/* Modal header */
 .modal-header {
   display: flex;
   align-items: center;
@@ -868,9 +808,7 @@ body.timer-running .colon {
   line-height: 1.5;
 }
 
-/* ----------------------------------------------------------------
-   19. SETTINGS ROWS — each mode's label + stepper + input
-   ---------------------------------------------------------------- */
+/* Settings rows */
 .modal-fields {
   display: flex;
   flex-direction: column;
@@ -893,7 +831,7 @@ body.timer-running .colon {
   background: rgba(255, 255, 255, 0.11);
 }
 
-/* Colored dot indicator matching the theme */
+/* Theme dot */
 .setting-dot {
   width: 8px;
   height: 8px;
@@ -917,7 +855,7 @@ body.timer-running .colon {
   min-width: 90px;
 }
 
-/* Stepper group: [−] [input] [+] */
+/* Stepper group */
 .setting-input-group {
   display: flex;
   align-items: center;
@@ -953,7 +891,7 @@ body.timer-running .colon {
   background: rgba(255, 255, 255, 0.22);
 }
 
-/* The number input itself — no spinners, styled clean */
+/* Number input */
 .setting-input {
   width: 44px;
   height: 34px;
@@ -991,9 +929,7 @@ body.timer-running .colon {
   min-width: 22px;
 }
 
-/* ----------------------------------------------------------------
-   20. MODAL ACTION BUTTONS
-   ---------------------------------------------------------------- */
+/* Modal actions */
 .modal-actions {
   display: flex;
   gap: 0.6rem;
