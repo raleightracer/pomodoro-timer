@@ -10,4 +10,4 @@ A lightweight, distraction-free Pomodoro timer designed to help focus on work an
 
 ## Built With
 
-*   [HTML5 / CSS3 / JavaScript]
+*   [React / Tailwind CSS / Vite]
